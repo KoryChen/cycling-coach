@@ -15,44 +15,20 @@
 pip install -r requirements.txt
 ```
 
-### 2. 設定環境變數
-
-```bash
-cp .env.example .env
-```
-
-編輯 `.env`，填入以下兩個金鑰：
-
-| 變數 | 說明 |
-|---|---|
-| `INTERVALS_ATHLETE_ID` | intervals.icu 運動員 ID |
-| `INTERVALS_API_KEY` | intervals.icu API 金鑰 |
-
-**取得 Athlete ID**：登入 intervals.icu 後，網址列會顯示 `intervals.icu/athlete/i/XXXXXXXX`，其中 `XXXXXXXX` 就是你的 Athlete ID。
-
-**取得 API 金鑰**：前往 intervals.icu → 右上角頭像 → Settings → 捲動至頁面底部 → API → 點擊「Copy API Key」。
-
-### 3. 建立訓練目標
+### 2. 執行初始設定
 
 在 Claude Code 中執行：
 
 ```
-/create-goal
+/rider-setup
 ```
 
-依照提示填入個人基本資料、FTP、年度目標與里程碑，指令會自動產生 `goals.md`。此檔案不納入版控，僅存在本地。
+指令會引導你完成：
+- intervals.icu 憑證設定（Athlete ID、API 金鑰）
+- 建立個人訓練目標（`goals.md`）
+- 同步初始訓練資料
 
-### 4. 同步訓練資料
-
-```bash
-python fetch.py           # 下載最近 90 天
-python fetch.py --all     # 下載全部歷史（從 2020-01-01）
-python fetch.py --start 2026-01-01  # 指定起始日期
-```
-
-### 5. 使用 Claude Code 指令
-
-在 Claude Code 中執行 `/fitness`、`/plan`、`/review-ride`、`/weekly-review`。
+完成後即可開始使用所有指令。
 
 ## Claude Code 指令
 
@@ -60,7 +36,8 @@ python fetch.py --start 2026-01-01  # 指定起始日期
 
 | 指令 | 說明 |
 |---|---|
-| `/create-goal` | 引導建立 `goals.md`（首次使用必做） |
+| `/rider-setup` | 首次安裝引導：憑證設定、建立目標、同步資料 |
+| `/create-goal` | 更新 `goals.md` 中的目標、里程碑或個人資料 |
 | `/fitness` | 顯示體能快照：CTL、ATL、TSB 趨勢與目標進度 |
 | `/plan [週數或月份]` | 規劃課表並建立至 intervals.icu（確認後才寫入） |
 | `/review-ride [YYYY-MM]` | 選擇單次騎乘進行詳細 review，含 power curve 與 PR 比對 |
