@@ -12,7 +12,7 @@
   python fetch.py                        # 最近 90 天
   python fetch.py --start 2024-01-01     # 從指定日期到今天
   python fetch.py --start 2024-01-01 --end 2024-12-31
-  python fetch.py --all                  # 全部歷史（從 2020-01-01）
+  python fetch.py --all                  # 全部歷史（從 HISTORY_START 開始）
   python fetch.py --verbose              # 顯示跳過的項目
 """
 
@@ -39,6 +39,9 @@ if _missing:
 from intervals.client import IntervalsClient
 
 DATA_DIR = Path(__file__).parent / "data"
+
+# 調整為你開始使用 intervals.icu 的年份
+HISTORY_START = "2020-01-01"
 
 logger = logging.getLogger("fetch")
 
@@ -171,7 +174,7 @@ def main():
     setup_logging(args.verbose)
 
     today = date.today().isoformat()
-    oldest = "2020-01-01" if args.all_time else (args.start or (date.today() - timedelta(days=90)).isoformat())
+    oldest = HISTORY_START if args.all_time else (args.start or (date.today() - timedelta(days=90)).isoformat())
     newest = args.end or today
 
     logger.info("=" * 50)
