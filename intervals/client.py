@@ -59,7 +59,7 @@ class IntervalsClient:
                 "normalized_power_watts": a.get("icu_weighted_avg_watts"),
                 "avg_heart_rate": a.get("average_heartrate"),
                 "tss": a.get("icu_training_load"),
-                "intensity_factor": a.get("icu_intensity"),
+                "intensity_factor": round(a["icu_intensity"] / 100, 4) if a.get("icu_intensity") is not None else None,
             })
         return result
 
@@ -83,7 +83,7 @@ class IntervalsClient:
             "avg_cadence": data.get("average_cadence"),
             "decoupling": data.get("decoupling"),
             "tss": data.get("icu_training_load"),
-            "intensity_factor": data.get("icu_intensity"),
+            "intensity_factor": round(data["icu_intensity"] / 100, 4) if data.get("icu_intensity") is not None else None,
             "power_zone_times": data.get("icu_zone_times"),
             "hr_zone_times": data.get("icu_hr_zone_times"),
             "hr_zones": data.get("icu_hr_zones"),
