@@ -47,7 +47,7 @@
 python3 -m intervals.streams <activity_id> <ftp>
 ```
 
-FTP 從 `goals.md` 讀取（目前 305 W）。
+FTP 從 `goals.md` 讀取（格式：`| FTP | XXX W`，解析第一欄的數字）。
 
 輸出為 JSON，包含：
 - `power_curve`：各時長（5s、30s、1min、5min、10min、20min）的最佳功率與佔 FTP 百分比
@@ -57,7 +57,9 @@ FTP 從 `goals.md` 讀取（目前 305 W）。
 
 ### 第五點五步：比對功率 PR
 
-取得活動日期（YYYY-MM-DD）與年份（YYYY），計算活動前一天作為查詢截止日（YYYY-MM-DD - 1 天），執行以下指令抓取 all-time 與當年度功率最佳紀錄：
+先從 `goals.md` 讀取體重（kg）。格式為 `- 體重：XX kg`，解析後取整數。
+
+取得活動日期（YYYY-MM-DD）與年份（YYYY），計算活動前一天作為查詢截止日（YYYY-MM-DD - 1 天），執行以下指令抓取 all-time 與當年度功率最佳紀錄（將 `WEIGHT`、`YYYY-MM-DD`、`YYYY` 替換為實際數值）：
 
 ```bash
 python3 -c "
@@ -68,13 +70,11 @@ client = IntervalsClient()
 activity_date = date.fromisoformat('YYYY-MM-DD')
 day_before = (activity_date - timedelta(days=1)).isoformat()
 year_start = 'YYYY-01-01'
-all_time = client.get_power_bests(end=day_before, weight=75)
-year = client.get_power_bests(start=year_start, end=day_before, weight=75)
+all_time = client.get_power_bests(end=day_before, weight=WEIGHT)
+year = client.get_power_bests(start=year_start, end=day_before, weight=WEIGHT)
 print(json.dumps({'all_time': all_time, 'year': year}))
 "
 ```
-
-（將 `YYYY-MM-DD` 與 `YYYY` 替換為活動的實際日期與年份）
 
 `end=day_before` 確保查詢的是本次活動**之前**的 PR，避免 intervals.icu 已將本次活動納入 power curve 而導致漏判。
 

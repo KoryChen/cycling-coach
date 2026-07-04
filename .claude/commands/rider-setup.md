@@ -40,14 +40,22 @@
 
 ```
 # 訓練目標
+<!--
+  此檔案由 /rider-setup 產生，之後可透過 /create-goal 更新。
+  以下欄位會被指令讀取，請確認填寫正確：
+    - 體重（kg）         → /review-ride 計算 W/kg 時使用
+    - 每週預期訓練時數   → /weekly-review 評估訓練量時使用
+    - FTP 目前值（體能指標表格第一欄）→ /review-ride、/fitness 使用
+    - 訓練負荷參考       → /weekly-review 評估 CTL 合理範圍時使用
+-->
 
 ## 個人基本資料
 
 - 姓名：XXX
 - 年齡：XX 歲
 - 身高：XXX cm
-- 體重：XX kg
-- 每週預期訓練時數：XX–XX 小時
+- 體重：XX kg          ← /review-ride 讀取此值計算 W/kg
+- 每週預期訓練時數：XX–XX 小時   ← /weekly-review 評估訓練量基準
 
 ## 主要目標
 
@@ -61,13 +69,13 @@
 
 | 指標 | 目前 | 目標（年底） |
 |---|---|---|
-| FTP | XXX W（X.XX W/kg） | XXX W（X.X W/kg） |
+| FTP | XXX W（X.XX W/kg） | XXX W（X.X W/kg） |   ← 目前 FTP 由 /review-ride、/fitness 讀取
 | CP5 | 未測（估計 ~XXX W） | XXX W（X.X W/kg） |
 | CTL | XX（YYYY-MM-DD） | 無硬性目標 |
 
 ## 訓練負荷參考
 
-- 每週 XX–XX 小時對應穩態 CTL 約 XX–XX
+- 每週 XX–XX 小時對應穩態 CTL 約 XX–XX   ← /weekly-review 評估 CTL 合理區間時參考
 - 無需刻意衝高 CTL，優先提升訓練品質與強度
 
 ## 里程碑

@@ -15,11 +15,25 @@
   }
 """
 
+import re
 import sys
 import json
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
+
+_GOALS_PATH = Path(__file__).parent.parent / "goals.md"
+
+
+def _read_ftp_from_goals() -> int | None:
+    if not _GOALS_PATH.exists():
+        return None
+    for line in _GOALS_PATH.read_text(encoding="utf-8").splitlines():
+        m = re.match(r"\|\s*FTP\s*\|\s*(\d+)\s*W", line)
+        if m:
+            return int(m.group(1))
+    return None
 
 DURATIONS = {
     "5s": 5, "30s": 30, "1min": 60,
@@ -105,6 +119,12 @@ if __name__ == "__main__":
         print("用法：python3 -m intervals.streams <activity_id> [ftp]", file=sys.stderr)
         sys.exit(1)
     activity_id = sys.argv[1]
-    ftp = int(sys.argv[2]) if len(sys.argv) > 2 else 305
+    if len(sys.argv) > 2:
+        ftp = int(sys.argv[2])
+    else:
+        ftp = _read_ftp_from_goals()
+        if ftp is None:
+            print("錯誤：未提供 FTP 且無法從 goals.md 讀取。請執行 /rider-setup 建立 goals.md，或手動傳入 FTP。", file=sys.stderr)
+            sys.exit(1)
     result = analyze(activity_id, ftp)
     print(json.dumps(result, ensure_ascii=False, indent=2))
