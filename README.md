@@ -50,7 +50,6 @@ pip install -r requirements.txt
 ```
 cycling/
 ├── fetch.py              # intervals.icu 資料同步
-├── goals.md              # 訓練目標與里程碑（個人設定）
 ├── requirements.txt
 │
 ├── coach/
@@ -61,12 +60,19 @@ cycling/
 │   ├── client.py         # intervals.icu API 客戶端
 │   └── streams.py        # 活動 streams 分析（power curve、疲勞）
 │
-├── data/                 # 本地資料（由 fetch.py 產生，不納入版控）
-│   └── YYYY/MM/
-│       ├── YYYY-MM-DD_活動名稱.json
-│       └── wellness.json
+├── .claude/commands/     # Claude Code 斜線指令定義
+│   ├── rider-setup.md    # 首次安裝引導
+│   ├── create-goal.md    # 更新訓練目標
+│   ├── fitness.md        # 體能狀態快照
+│   ├── plan.md           # 課表規劃
+│   ├── review-ride.md    # 單次騎乘 review
+│   └── weekly-review.md  # 週訓練分析
 │
-└── .claude/commands/     # Claude Code 斜線指令定義
+├── goals.md              # 訓練目標（由 /rider-setup 產生，不納入版控）
+└── data/                 # 訓練資料（由 fetch.py 產生，不納入版控）
+    └── YYYY/MM/
+        ├── YYYY-MM-DD_活動名稱.json
+        └── wellness.json
 ```
 
 ## 資料說明
