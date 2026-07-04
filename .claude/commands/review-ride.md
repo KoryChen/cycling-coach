@@ -57,28 +57,32 @@ FTP 從 `goals.md` 讀取（目前 305 W）。
 
 ### 第五點五步：比對功率 PR
 
-取得活動年份（從活動日期的 YYYY），執行以下指令抓取 all-time 與當年度功率最佳紀錄：
+取得活動日期（YYYY-MM-DD）與年份（YYYY），計算活動前一天作為查詢截止日（YYYY-MM-DD - 1 天），執行以下指令抓取 all-time 與當年度功率最佳紀錄：
 
 ```bash
 python3 -c "
 from intervals.client import IntervalsClient
+from datetime import date, timedelta
 import json
 client = IntervalsClient()
-all_time = client.get_power_bests(weight=75)
-year = client.get_power_bests(start='YYYY-01-01', end='YYYY-12-31', weight=75)
+activity_date = date.fromisoformat('YYYY-MM-DD')
+day_before = (activity_date - timedelta(days=1)).isoformat()
+year_start = 'YYYY-01-01'
+all_time = client.get_power_bests(end=day_before, weight=75)
+year = client.get_power_bests(start=year_start, end=day_before, weight=75)
 print(json.dumps({'all_time': all_time, 'year': year}))
 "
 ```
 
-（將 `YYYY` 替換為活動的實際年份）
+（將 `YYYY-MM-DD` 與 `YYYY` 替換為活動的實際日期與年份）
 
-拿到的 `all_time` 與 `year` 分別代表歷史 PR 與年度最佳。
+`end=day_before` 確保查詢的是本次活動**之前**的 PR，避免 intervals.icu 已將本次活動納入 power curve 而導致漏判。
 
 將 streams 的 `power_curve` 各時段最佳功率與上述數字逐一比對：
 
-- 若本次某時段功率 **超過 `all_time` 對應值** → 標記為 🏆 All-time PR
-- 若本次某時段功率 **超過 `year` 對應值** 但未超過 all-time → 標記為 ⭐ 年度最佳
-- 若未超過 → 顯示距離年度最佳的差距（-X W）
+- 若本次某時段功率 **大於等於 `all_time` 對應值** → 標記為 🏆 All-time PR
+- 若本次某時段功率 **大於等於 `year` 對應值** 但未達 all-time → 標記為 ⭐ 年度最佳
+- 若未達 → 顯示距離年度最佳的差距（-X W）
 
 可比對的時段：5s、1min、5min、20min（streams 有對應值的時段才比）。
 
