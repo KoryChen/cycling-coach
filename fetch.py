@@ -27,15 +27,6 @@ from pathlib import Path
 from datetime import date, timedelta
 from dotenv import load_dotenv
 
-load_dotenv()
-
-_required = ["INTERVALS_ATHLETE_ID", "INTERVALS_API_KEY"]
-_missing = [k for k in _required if not os.environ.get(k)]
-if _missing:
-    print(f"錯誤：缺少環境變數 {', '.join(_missing)}")
-    print("請複製 .env.example 為 .env 並填入你的 API 金鑰。")
-    sys.exit(1)
-
 from intervals.client import IntervalsClient
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -172,6 +163,14 @@ def main():
     args = parser.parse_args()
 
     setup_logging(args.verbose)
+
+    load_dotenv()
+    _required = ["INTERVALS_ATHLETE_ID", "INTERVALS_API_KEY"]
+    _missing = [k for k in _required if not os.environ.get(k)]
+    if _missing:
+        print(f"錯誤：缺少環境變數 {', '.join(_missing)}")
+        print("請複製 .env.example 為 .env 並填入你的 API 金鑰。")
+        sys.exit(1)
 
     today = date.today().isoformat()
     oldest = HISTORY_START if args.all_time else (args.start or (date.today() - timedelta(days=90)).isoformat())

@@ -12,7 +12,7 @@
 
 ## 前置需求
 
-- Python 3.10+
+- Python 3.9+
 - [Claude Code](https://claude.ai/code)
 - intervals.icu 帳號
 
