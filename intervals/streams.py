@@ -27,26 +27,39 @@ DURATIONS = {
 }
 
 
+def resample_to_1hz(times, values):
+    """Resample non-uniform time-series to 1Hz using forward-fill."""
+    pairs = [(int(t), v) for t, v in zip(times, values) if t is not None and v is not None]
+    if not pairs:
+        return []
+    t_start, t_end = pairs[0][0], pairs[-1][0]
+    result = []
+    idx = 0
+    for t in range(t_start, t_end + 1):
+        while idx + 1 < len(pairs) and pairs[idx + 1][0] <= t:
+            idx += 1
+        result.append(pairs[idx][1])
+    return result
+
+
 def best_effort(data, window):
-    filled = [v for v in data if v is not None]
-    if len(filled) < window:
+    if len(data) < window:
         return None
-    total = sum(filled[:window])
+    total = sum(data[:window])
     best = total
-    for i in range(window, len(filled)):
-        total += filled[i] - filled[i - window]
+    for i in range(window, len(data)):
+        total += data[i] - data[i - window]
         if total > best:
             best = total
     return round(best / window, 1)
 
 
 def half_avg(data):
-    vals = [v for v in data if v is not None]
-    if not vals:
+    if not data:
         return None, None
-    mid = len(vals) // 2
+    mid = len(data) // 2
     def avg(lst): return round(sum(lst) / len(lst), 1) if lst else None
-    return avg(vals[:mid]), avg(vals[mid:])
+    return avg(data[:mid]), avg(data[mid:])
 
 
 def analyze(activity_id: str, ftp: int = 305) -> dict:
@@ -58,8 +71,9 @@ def analyze(activity_id: str, ftp: int = 305) -> dict:
     )
 
     by_type = {ch["type"]: ch.get("data", []) for ch in streams}
-    watts = by_type.get("watts", [])
-    hr = by_type.get("heartrate", [])
+    times = by_type.get("time", [])
+    watts = resample_to_1hz(times, by_type.get("watts", []))
+    hr = resample_to_1hz(times, by_type.get("heartrate", []))
 
     power_curve = {}
     for label, secs in DURATIONS.items():
