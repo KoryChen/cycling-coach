@@ -32,7 +32,17 @@ cp .env.example .env
 
 **取得 API 金鑰**：前往 intervals.icu → 右上角頭像 → Settings → 捲動至頁面底部 → API → 點擊「Copy API Key」。
 
-### 3. 同步訓練資料
+### 3. 建立訓練目標
+
+在 Claude Code 中執行：
+
+```
+/create-goal
+```
+
+依照提示填入個人基本資料、FTP、年度目標與里程碑，指令會自動產生 `goals.md`。此檔案不納入版控，僅存在本地。
+
+### 4. 同步訓練資料
 
 ```bash
 python fetch.py           # 下載最近 90 天
@@ -40,7 +50,7 @@ python fetch.py --all     # 下載全部歷史（從 2020-01-01）
 python fetch.py --start 2026-01-01  # 指定起始日期
 ```
 
-### 4. 使用 Claude Code 指令
+### 5. 使用 Claude Code 指令
 
 在 Claude Code 中執行 `/fitness`、`/plan`、`/review-ride`、`/weekly-review`。
 
@@ -50,6 +60,7 @@ python fetch.py --start 2026-01-01  # 指定起始日期
 
 | 指令 | 說明 |
 |---|---|
+| `/create-goal` | 引導建立 `goals.md`（首次使用必做） |
 | `/fitness` | 顯示體能快照：CTL、ATL、TSB 趨勢與目標進度 |
 | `/plan [週數或月份]` | 規劃課表並建立至 intervals.icu（確認後才寫入） |
 | `/review-ride [YYYY-MM]` | 選擇單次騎乘進行詳細 review，含 power curve 與 PR 比對 |
