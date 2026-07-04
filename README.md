@@ -40,7 +40,7 @@ pip install -r requirements.txt
 ```
 
 指令會引導你完成：
-- intervals.icu 憑證設定（Athlete ID、API 金鑰）
+- 憑證設定（自動建立 `.env`，填入 Athlete ID 與 API 金鑰）
 - 建立個人訓練目標（`goals.md`）
 - 同步初始訓練資料
 
