@@ -18,13 +18,20 @@
 
 ## 快速開始
 
-### 1. 安裝依賴
+### 1. Clone 專案
+
+```bash
+git clone https://github.com/KoryChen/cycling-coach.git
+cd cycling-coach
+```
+
+### 2. 安裝依賴
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. 執行初始設定
+### 3. 執行初始設定
 
 在 Claude Code 中執行：
 
@@ -54,6 +61,8 @@ python fetch.py        # 同步最近 90 天
 python fetch.py --all  # 重新同步全部歷史
 ```
 
+> `--all` 預設從 `fetch.py` 頂部的 `HISTORY_START` 日期開始，可依自己開始使用 intervals.icu 的年份調整。
+
 ## Claude Code 指令
 
 在 Claude Code 中可直接使用以下斜線指令（需先同步資料）：
@@ -76,6 +85,7 @@ python fetch.py --all  # 重新同步全部歷史
 cycling/
 ├── fetch.py              # intervals.icu 資料同步
 ├── requirements.txt
+├── .env.example          # 環境變數範本（複製為 .env 並填入憑證）
 │
 ├── coach/
 │   ├── review_rules.md         # 單次騎乘評估規則
