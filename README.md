@@ -43,6 +43,12 @@ pip install -r requirements.txt
 
 `/rider-setup` 只執行一次初始同步。之後定期執行以保持資料最新：
 
+在 Claude Code 中執行：
+```
+/fetch-activities
+```
+
+或直接在 terminal 執行：
 ```bash
 python fetch.py        # 同步最近 90 天
 python fetch.py --all  # 重新同步全部歷史
@@ -56,6 +62,7 @@ python fetch.py --all  # 重新同步全部歷史
 |---|---|
 | `/rider-setup` | 首次安裝引導：憑證設定、建立目標、同步資料 |
 | `/create-goal` | 更新 `goals.md` 中的目標、里程碑或個人資料 |
+| `/fetch-activities` | 從 intervals.icu 同步訓練資料（互動式選擇範圍） |
 | `/fitness` | 顯示體能快照：CTL、ATL、TSB 趨勢與目標進度 |
 | `/plan [週數或月份]` | 規劃課表並建立至 intervals.icu（確認後才寫入） |
 | `/review-ride [YYYY-MM]` | 選擇單次騎乘進行詳細 review，含 power curve 與 PR 比對 |
@@ -78,13 +85,14 @@ cycling/
 │   ├── client.py         # intervals.icu API 客戶端
 │   └── streams.py        # 活動 streams 分析（power curve、疲勞）
 │
-├── .claude/commands/     # Claude Code 斜線指令定義
-│   ├── rider-setup.md    # 首次安裝引導
-│   ├── create-goal.md    # 更新訓練目標
-│   ├── fitness.md        # 體能狀態快照
-│   ├── plan.md           # 課表規劃
-│   ├── review-ride.md    # 單次騎乘 review
-│   └── weekly-review.md  # 週訓練分析
+├── .claude/commands/        # Claude Code 斜線指令定義
+│   ├── rider-setup.md       # 首次安裝引導
+│   ├── create-goal.md       # 更新訓練目標
+│   ├── fetch-activities.md  # 同步訓練資料
+│   ├── fitness.md           # 體能狀態快照
+│   ├── plan.md              # 課表規劃
+│   ├── review-ride.md       # 單次騎乘 review
+│   └── weekly-review.md     # 週訓練分析
 │
 ├── goals.md              # 訓練目標（由 /rider-setup 產生，不納入版控）
 └── data/                 # 訓練資料（由 fetch.py 產生，不納入版控）
