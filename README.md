@@ -4,8 +4,17 @@
 
 ## 功能
 
+- **體能快照**：即時顯示 CTL、ATL、TSB 趨勢，對照目標進度
+- **單次騎乘 Review**：分析 power curve、功率區間、疲勞分析，並與 all-time PR 及年度最佳比對
+- **週訓練分析**：彙整週期總覽、強度分佈、目標進度評估與下週建議
+- **課表規劃**：依當前體能與目標自動排課，確認後直接寫入 intervals.icu 行事曆
 - **資料同步**：從 intervals.icu 下載歷史活動與體能數據，儲存為本地 JSON
-- **Claude Code 指令**：在 Claude Code 中直接使用 `/fitness`、`/plan`、`/review-ride`、`/weekly-review`
+
+## 前置需求
+
+- Python 3.10+
+- [Claude Code](https://claude.ai/code)
+- intervals.icu 帳號
 
 ## 快速開始
 
@@ -29,6 +38,15 @@ pip install -r requirements.txt
 - 同步初始訓練資料
 
 完成後即可開始使用所有指令。
+
+## 資料更新
+
+`/rider-setup` 只執行一次初始同步。之後定期執行以保持資料最新：
+
+```bash
+python fetch.py        # 同步最近 90 天
+python fetch.py --all  # 重新同步全部歷史
+```
 
 ## Claude Code 指令
 
@@ -74,13 +92,6 @@ cycling/
         ├── YYYY-MM-DD_活動名稱.json
         └── wellness.json
 ```
-
-## 資料說明
-
-`fetch.py` 將資料儲存於 `data/` 目錄（不納入版控）：
-
-- **活動檔**：`data/YYYY/MM/YYYY-MM-DD_活動名稱.json`，每次騎乘一個檔案
-- **體能檔**：`data/YYYY/MM/wellness.json`，每月一個檔案，包含每日 CTL/ATL/TSB 等
 
 ## 依賴
 
