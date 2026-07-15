@@ -117,6 +117,42 @@ def fetch_activities(client: IntervalsClient, oldest: str, newest: str) -> dict:
     return stats
 
 
+def fetch_events(client: IntervalsClient, oldest: str, newest: str) -> dict:
+    logger.info("課表計畫查詢：%s ~ %s", oldest, newest)
+    events = client.get_events_in_range(oldest, newest)
+    workouts = [e for e in events if e.get("category") == "WORKOUT"]
+    logger.info("找到 %d 筆 WORKOUT 計畫，整理中...", len(workouts))
+
+    by_month: dict[str, list] = {}
+    for e in workouts:
+        d = e.get("date", "")
+        if not d or len(d) < 7:
+            continue
+        by_month.setdefault(d[:7], []).append(e)
+
+    saved = 0
+    for ym in sorted(by_month):
+        year, month = ym.split("-")
+        path = DATA_DIR / year / month / "events.json"
+
+        if path.exists():
+            with open(path, encoding="utf-8") as f:
+                existing = {str(e["id"]): e for e in json.load(f)}
+        else:
+            existing = {}
+
+        for e in by_month[ym]:
+            existing[str(e["id"])] = e
+
+        merged = sorted(existing.values(), key=lambda e: e.get("date", ""))
+        save_json(path, merged)
+        saved += len(merged)
+        logger.debug("events %s：%d 筆", ym, len(merged))
+
+    logger.info("課表完成｜共 %d 個月，%d 筆記錄已儲存", len(by_month), saved)
+    return {"months": len(by_month), "records": saved}
+
+
 def fetch_wellness(client: IntervalsClient, oldest: str, newest: str) -> dict:
     logger.info("體能資料查詢：%s ~ %s", oldest, newest)
     records = client.get_wellness_in_range(oldest, newest)
@@ -187,6 +223,7 @@ def main():
 
     act_stats = fetch_activities(client, oldest, newest)
     fetch_wellness(client, oldest, newest)
+    fetch_events(client, oldest, newest)
 
     total_elapsed = time.monotonic() - t0
     logger.info("=" * 50)

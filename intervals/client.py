@@ -88,7 +88,41 @@ class IntervalsClient:
             "hr_zone_times": data.get("icu_hr_zone_times"),
             "hr_zones": data.get("icu_hr_zones"),
             "power_zones": data.get("icu_power_zones"),
+            "warmup_secs": data.get("icu_warmup_time") or 0,
+            "cooldown_secs": data.get("icu_cooldown_time") or 0,
+            "lap_count": data.get("icu_lap_count") or 0,
+            "paired_event_id": data.get("paired_event_id"),
         }
+
+    def get_events_in_range(self, oldest: str, newest: str) -> list[dict]:
+        events = self._get("events", params={"oldest": oldest, "newest": newest})
+        result = []
+        for e in events:
+            result.append({
+                "id": e.get("id"),
+                "date": (e.get("start_date_local") or "")[:10],
+                "name": e.get("name"),
+                "type": e.get("type"),
+                "category": e.get("category"),
+                "description": e.get("description"),
+                "workout_doc": e.get("workout_doc"),
+                "load": e.get("icu_training_load"),
+            })
+        return result
+
+    def get_workout_plan_for_date(self, date_str: str) -> dict | None:
+        events = self.get_events_in_range(date_str, date_str)
+        for e in events:
+            if e.get("category") == "WORKOUT":
+                return e
+        return None
+
+    def get_activity_intervals(self, activity_id: str) -> list[dict]:
+        """Fetch icu_intervals for an activity (per-interval breakdown with start/end indices)."""
+        url = f"https://intervals.icu/api/v1/activity/{activity_id}/intervals"
+        resp = self.session.get(url)
+        resp.raise_for_status()
+        return resp.json().get("icu_intervals", [])
 
     def get_wellness(self, days: int = 14) -> list[dict]:
         oldest = (date.today() - timedelta(days=days)).isoformat()

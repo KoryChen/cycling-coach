@@ -41,7 +41,7 @@
 
 ### 第五步：抓取 Streams 分析
 
-從活動 JSON 取得 `id` 欄位，執行以下指令抓取完整騎乘資料並計算分析摘要：
+從活動 JSON 取得 `id` 欄位，執行以下指令抓取完整騎乘資料並計算分析摘要（不傳 warmup/cooldown，自動使用 active seconds 過濾停等與滑行）：
 
 ```bash
 python3 -m intervals.streams <activity_id> <ftp>
